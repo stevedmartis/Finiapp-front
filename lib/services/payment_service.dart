@@ -2,7 +2,7 @@ import 'package:finiapp/models/payment_dto.dart';
 
 class PaymentService {
   // Lista de pagos próximos
-  List<PaymentDto> _upcomingPayments = [];
+  final List<PaymentDto> _upcomingPayments = [];
 
   // Método para obtener pagos próximos
   List<PaymentDto> getUpcomingPayments() {

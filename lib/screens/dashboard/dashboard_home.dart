@@ -8,12 +8,10 @@ import 'package:finiapp/models/payment_dto.dart';
 import 'package:finiapp/models/savind_dto.dart';
 import 'package:finiapp/screens/credit_card/account_cards_widget.dart';
 import 'package:finiapp/screens/credit_card/credit_card_detail.dart';
-import 'package:finiapp/screens/dashboard/components/charts/financial_categories.chat.dart';
 import 'package:finiapp/screens/dashboard/components/custom_nav_bar.dart';
 import 'package:finiapp/screens/dashboard/components/header_custom.dart';
 import 'package:finiapp/screens/dashboard/pages/financial_health.dart';
 import 'package:finiapp/screens/dashboard/pages/financial_tips.dart';
-import 'package:finiapp/screens/dashboard/pages/resume_50_20_30.dart';
 import 'package:finiapp/screens/dashboard/pages/saving_goals.dart';
 import 'package:finiapp/screens/dashboard/pages/upcoming_payment.dart';
 import 'package:finiapp/screens/dashboard/transactions/transaction_add_form.dart';
@@ -70,7 +68,7 @@ class DashBoardHomeScreenState extends State<DashBoardHomeScreen> {
   late ScrollController _scrollController;
   late MenuAppController menuAppController;
 
-  List<PaymentDto> _upcomingPayments = [];
+  final List<PaymentDto> _upcomingPayments = [];
   List<SavingGoalDto> _savingGoals = [];
   List<FinancialTipDto> _financialTips = [];
   FinancialHealthDto? _financialHealth;

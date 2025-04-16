@@ -56,8 +56,6 @@ class AddAccountScreenState extends State<AddAccountScreen> {
     setState(() {
       _hasCompletedOnboarding = status;
     });
-
-    debugPrint("🔵 Estado de onboarding: $_hasCompletedOnboarding");
   }
 
   void _onBalanceChanged(TextEditingController controller, String value) {
@@ -133,10 +131,8 @@ class AddAccountScreenState extends State<AddAccountScreen> {
     _balanceController.clear();
 
     if (_hasCompletedOnboarding) {
-      debugPrint("🟢 Ya hizo onboarding, volvemos al home.");
       Navigator.pop(context);
     } else {
-      debugPrint("🔴 Aún en onboarding, no cerramos pantalla.");
       setState(() {});
     }
   }

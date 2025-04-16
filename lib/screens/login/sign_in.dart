@@ -1,8 +1,6 @@
 import 'package:finiapp/constants.dart';
-import 'package:finiapp/screens/login/onboarding_page.dart';
 
 import 'package:finiapp/services/auth_service.dart';
-import 'package:finiapp/utilis/navigator_service.dart';
 import 'package:finiapp/widgets/buttons/button_continue_loading_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -134,9 +132,6 @@ class SignIn extends StatelessWidget {
     await authProvider.signInWithGoogle();
 
     if (!authProvider.isLoading && authProvider.currentUser != null) {
-      print("✅ isLoading: ${authProvider.isLoading}");
-      print("✅ isAuthenticated: ${authProvider.isAuthenticated}");
-      print("✅ currentUser: ${authProvider.globalUser?.email}");
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Error al iniciar sesión")),

@@ -7,9 +7,9 @@ class FinancialTipsWidget extends StatelessWidget {
   final List<FinancialTipDto> tips;
 
   const FinancialTipsWidget({
-    Key? key,
+    super.key,
     required this.tips,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +30,12 @@ class FinancialTipsWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.lightbulb_outline,
                 color: Colors.amberAccent,
                 size: 20,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 'Consejos para ti',
                 style: TextStyle(
@@ -53,11 +53,11 @@ class FinancialTipsWidget extends StatelessWidget {
 
           // Enlace para ver más si hay más de un consejo
           if (tips.length > 1)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
                     'Ver más consejos',
                     style: TextStyle(

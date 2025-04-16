@@ -1,14 +1,11 @@
 import 'dart:convert';
 
-import 'package:finiapp/main.dart';
-import 'package:finiapp/models/account_summary.dart';
 import 'package:finiapp/models/finance_summary.dart';
 import 'package:finiapp/screens/dashboard/dashboard_home.dart';
 import 'package:finiapp/services/accounts_services.dart';
 import 'package:finiapp/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FinancialDataService with ChangeNotifier {
@@ -106,12 +103,10 @@ class FinancialDataService with ChangeNotifier {
   }
 
   void addTransactionToSummary(TransactionDto transaction) {
-    if (_financialData == null) {
-      _financialData = FinancialData(
-        creditcards: [],
-        financialSummary: [],
-      );
-    }
+    _financialData ??= FinancialData(
+      creditcards: [],
+      financialSummary: [],
+    );
 
     int index = _financialData!.financialSummary.indexWhere(
       (summary) => summary.accountId == int.tryParse(transaction.accountId),
@@ -331,12 +326,10 @@ class FinancialDataService with ChangeNotifier {
   }
 
   void addAccountToSummary(Account account) {
-    if (_financialData == null) {
-      _financialData = FinancialData(
-        creditcards: [],
-        financialSummary: [],
-      );
-    }
+    _financialData ??= FinancialData(
+      creditcards: [],
+      financialSummary: [],
+    );
 
     int index = _financialData!.financialSummary
         .indexWhere((summary) => summary.accountId == int.tryParse(account.id));

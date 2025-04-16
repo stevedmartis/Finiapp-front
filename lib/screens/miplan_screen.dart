@@ -12,9 +12,9 @@ class BudgetPlanWidget extends StatefulWidget {
   final List<TransactionDto> transactions;
 
   const BudgetPlanWidget({
-    Key? key,
+    super.key,
     required this.transactions,
-  }) : super(key: key);
+  });
 
   @override
   State<BudgetPlanWidget> createState() => _BudgetPlanWidgetState();
@@ -615,7 +615,7 @@ class _BudgetPlanWidgetState extends State<BudgetPlanWidget> {
           // Lista de categorías con detalles
           ...budgetData.entries.map((entry) {
             return _buildCategoryItem(entry.key, entry.value);
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -805,7 +805,7 @@ class RulePieChartPainter extends CustomPainter {
       // Borde entre ahorros y necesidades (si el círculo está completo)
       if (savingsPercentage > 0 &&
           (needsPercentage + wantsPercentage + savingsPercentage) >= 99) {
-        final savingsEndAngle = -pi / 2;
+        const savingsEndAngle = -pi / 2;
         canvas.drawLine(
           center,
           Offset(

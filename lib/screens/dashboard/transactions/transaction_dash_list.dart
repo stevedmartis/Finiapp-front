@@ -55,9 +55,7 @@ class TransactionsDashList extends StatelessWidget {
     final currentTheme = Provider.of<ThemeProvider>(context);
 
     return GestureDetector(
-      onTap: () {
-        print("Abriendo detalles de la transacción ${latestTransaction.id}...");
-      },
+      onTap: () {},
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),

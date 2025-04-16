@@ -1,6 +1,5 @@
 import 'package:finiapp/constants.dart';
 import 'package:finiapp/screens/dashboard/components/header_custom.dart';
-import 'package:finiapp/screens/providers/theme_provider.dart';
 import 'package:finiapp/services/accounts_services.dart';
 import 'package:finiapp/services/finance_summary_service.dart';
 import 'package:finiapp/services/transaction_service.dart';
@@ -24,7 +23,7 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
   int _selectedCategoryIndex = 0;
   bool _isIncome = true;
   bool _showMoreCategories = false;
-  DateTime _selectedDate = DateTime.now();
+  final DateTime _selectedDate = DateTime.now();
   bool _isEditing = false;
   String? _selectedAccountId;
 
@@ -186,7 +185,7 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
                     showCheckmark: false,
                     avatar: Icon(Icons.arrow_upward,
                         color: _isIncome ? Colors.white : Colors.green),
-                    label: Text("Ingreso"),
+                    label: const Text("Ingreso"),
                     selected: _isIncome,
                     selectedColor: Colors.green,
                     backgroundColor: Colors.black26,
@@ -194,12 +193,12 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
                     labelStyle: TextStyle(
                         color: _isIncome ? Colors.white : Colors.green),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   ChoiceChip(
                     showCheckmark: false,
                     avatar: Icon(Icons.arrow_downward,
                         color: !_isIncome ? Colors.white : Colors.red),
-                    label: Text("Gasto"),
+                    label: const Text("Gasto"),
                     selected: !_isIncome,
                     selectedColor: Colors.red,
                     backgroundColor: Colors.black26,
@@ -209,7 +208,7 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               DropdownButtonFormField(
                 value: _selectedAccountId,
                 onChanged: (value) {
@@ -323,9 +322,9 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
                 _selectedCategoryIndex == index ? logoCOLOR2 : Colors.grey[800],
             child: Icon(category['icon'], color: Colors.white),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(category['label'],
-              style: TextStyle(color: Colors.white, fontSize: 12)),
+              style: const TextStyle(color: Colors.white, fontSize: 12)),
         ],
       ),
     );

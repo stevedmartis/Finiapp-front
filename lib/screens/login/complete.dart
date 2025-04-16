@@ -36,7 +36,7 @@ class DataBackupCompletedPage extends AnimatedWidget {
                     tween: Tween(begin: 0.0, end: 1.0),
                     duration: const Duration(milliseconds: 400),
                     builder: (_, value, child) {
-                      final val = value as double;
+                      final val = value;
                       return Opacity(
                         opacity: val,
                         child: Transform.translate(

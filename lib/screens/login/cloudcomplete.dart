@@ -40,11 +40,11 @@ class DataBackupCloudPage extends StatelessWidget {
   });
 
   DataBackupCloudPage({
-    Key? key,
+    super.key,
     required this.progressAnimation,
     required this.cloudOutAnimation,
     required this.bubblesAnimation,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     final queryData = MediaQuery.of(context).size;

@@ -48,7 +48,7 @@ class FinancialHealthCard extends StatelessWidget {
   final VoidCallback? onAddTransactionPressed;
 
   const FinancialHealthCard({
-    Key? key,
+    super.key,
     this.score,
     required this.message,
     required this.tips,
@@ -57,7 +57,7 @@ class FinancialHealthCard extends StatelessWidget {
     required this.totalWants,
     required this.totalSavings,
     this.onAddTransactionPressed,
-  }) : super(key: key);
+  });
 
   FinancialHealthStatus _getFinancialHealthStatus() {
     // Sin transacciones o datos insuficientes
@@ -104,8 +104,6 @@ class FinancialHealthCard extends StatelessWidget {
         needsBudget > 0 ? (totalNeeds / needsBudget) * 100 : 0;
     final double wantsPercentage =
         wantsBudget > 0 ? (totalWants / wantsBudget) * 100 : 0;
-    final double savingsPercentage =
-        savingsBudget > 0 ? (totalSavings / savingsBudget) * 100 : 0;
 
     // Verificación de presupuesto agotado (100% usado)
     bool isNeedsBudgetMaxed = needsPercentage >= 98 &&
@@ -118,11 +116,6 @@ class FinancialHealthCard extends StatelessWidget {
         totalNeeds > (needsBudget * 1.05); // Más de 105% se considera exceso
     bool isWantsExceeded = totalWants > (wantsBudget * 1.05);
     bool isSavingsInsufficient = totalSavings < (savingsBudget * 0.5);
-
-    // Calcular disponible en cada categoría
-    double needsAvailable = needsBudget - totalNeeds;
-    double wantsAvailable = wantsBudget - totalWants;
-    double savingsAvailable = savingsBudget - totalSavings;
 
     // Calcular el impacto del ingreso de ahorros en las otras categorías
     double remainingOverNeeds = totalNeeds - needsBudget;
@@ -331,11 +324,6 @@ class FinancialHealthCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Debug - Valores para Salud Financiera:');
-    print('Account Balance: $accountBalance');
-    print('Total Needs: $totalNeeds');
-    print('Total Wants: $totalWants');
-    print('Total Savings: $totalSavings');
     final healthStatus = _getFinancialHealthStatus();
     final currentTheme = Provider.of<ThemeProvider>(context);
 
@@ -410,7 +398,7 @@ class FinancialHealthCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...healthStatus.tips.map((tip) => _buildTipItem(tip)).toList(),
+          ...healthStatus.tips.map((tip) => _buildTipItem(tip)),
 
           // Add Transaction Button for Starting Status
           if (healthStatus.status == HealthStatus.starting &&

@@ -134,7 +134,7 @@ class AuthService with ChangeNotifier {
         notifyListeners();
       } else if (!_handledSignOut) {
         _handledSignOut = true;
-        print("👤 Usuario desconectado. Limpiando sesión.");
+
         currentUser = null;
         await tokenStorage.deleteAllTokens(); // o lo que uses para limpiar
         notifyListeners();
@@ -156,8 +156,6 @@ class AuthService with ChangeNotifier {
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-      print("🧪 ID Token: ${googleAuth.idToken}");
-      print("🧪 Access Token: ${googleAuth.accessToken}");
 
       // Flujo específico por plataforma
       if (Platform.isIOS) {
@@ -172,8 +170,6 @@ class AuthService with ChangeNotifier {
         final User? firebaseUser = authResult.user;
 
         if (firebaseUser != null) {
-          print("✅ Usuario autenticado: ${firebaseUser.email}");
-
           final String? token = await firebaseUser.getIdToken();
 
           currentUser = UserAuth(
@@ -186,8 +182,6 @@ class AuthService with ChangeNotifier {
           await tokenStorage.saveUser(currentUser!);
         }
       } else {
-        // Método alternativo para Android (evita el error de API key)
-        print("🔄 Usando método alternativo para Android");
         currentUser = UserAuth(
           email: googleUser.email,
           fullName: googleUser.displayName,
@@ -199,7 +193,6 @@ class AuthService with ChangeNotifier {
         notifyListeners();
       }
     } catch (error) {
-      print("❌ Error general: $error");
     } finally {
       isLoading = false;
       notifyListeners();
@@ -243,7 +236,7 @@ class AuthService with ChangeNotifier {
     try {
       // Simular token ficticio (puedes usar UUID o lo que quieras)
       final fakeAccessToken = 'token_falso_${user.email}';
-      final fakeRefreshToken = 'refresh_token_falso';
+      const fakeRefreshToken = 'refresh_token_falso';
 
       await tokenStorage.saveToken(fakeAccessToken, fakeRefreshToken);
 

@@ -19,53 +19,37 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  print("🚀 Iniciando la aplicación...");
   WidgetsFlutterBinding.ensureInitialized();
-
-  print("✅ Flutter inicializado");
 
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    print("✅ Firebase inicializado correctamente");
   } on FirebaseException catch (e) {
     if (e.code == 'duplicate-app') {
-      print("⚠️ Firebase ya estaba inicializado: ${e.message}");
     } else {
       rethrow;
     }
   }
 
-  print("✅ Firebase inicializado");
-
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool hasCompletedOnboarding =
       prefs.getBool("hasCompletedOnboarding") ?? false;
-  print(
-      "✅ Preferencias cargadas - Onboarding completado: $hasCompletedOnboarding");
 
   await initializeDateFormatting('es_ES');
-  print("✅ Formato de fecha inicializado");
 
   AuthService authService = AuthService();
-  print("✅ AuthService inicializado");
 
   AccountsProvider accountsProvider = AccountsProvider();
-  print("✅ AccountsProvider inicializado");
 
   TransactionProvider transactionProvider = TransactionProvider();
-  print("✅ TransactionProvider inicializado");
 
   FinancialDataService financialProvider = FinancialDataService();
-  print("✅ FinancialDataService inicializado");
-
-  print("🧹 Limpiando todos los datos de la aplicación...");
 
   await authService.loadUserData();
-  print("🔄 Cargando datos financieros guardados...");
+
   await financialProvider.loadData();
-  print("🔄 Cargando cuentas...");
+
   await accountsProvider.loadAccounts();
 
 /*   await authService.signOut();
@@ -73,73 +57,47 @@ void main() async {
   await transactionProvider.clearTransactions();
   await financialProvider
       .clearFinanceData(); // Asegúrate de haber implementado este método
-  print("✅ Todos los datos han sido eliminados");
+  "✅ Todos los datos han sido eliminados");
 
   await prefs.setBool("hasCompletedOnboarding", false);
  */
   // Load financial data first
 
-  print("🔄 Cargando transacciones...");
   await transactionProvider.loadTransactions();
 
   if (hasCompletedOnboarding) {
-    print("📊 Verificando datos financieros...");
     // Only sync if we don't have existing financial data
     if (financialProvider.financialSummary.isEmpty) {
-      print("⚠️ No hay datos financieros, inicializando...");
-
       // Initialize if needed
       financialProvider.initializeData();
 
       // Add each account to the summary if not already there
       if (accountsProvider.accounts.isNotEmpty) {
-        print(
-            "📊 Agregando ${accountsProvider.accounts.length} cuentas al resumen financiero...");
         for (var account in accountsProvider.accounts) {
           // Check if this account is already in the summary
           bool accountExists = financialProvider.financialSummary
               .any((summary) => summary.accountId.toString() == account.id);
 
           if (!accountExists) {
-            print(
-                "📊 Agregando cuenta ${account.id} (${account.name}) con saldo ${account.balance}");
             financialProvider.addAccountToSummary(account);
-          } else {
-            print("📊 La cuenta ${account.id} ya existe en el resumen");
-          }
+          } else {}
         }
 
         // Then sync transactions
         if (transactionProvider.transactions.isNotEmpty) {
-          print(
-              "📊 Sincronizando ${transactionProvider.transactions.length} transacciones...");
           financialProvider.syncTransactionsWithSummary(
             transactionProvider.transactions,
           );
-        } else {
-          print("📊 No hay transacciones para sincronizar");
-        }
+        } else {}
 
-        // Calculate the summary
-        print("📊 Calculando resumen global...");
         financialProvider.calculateGlobalSummary();
-      } else {
-        print(
-            "⚠️ No hay cuentas disponibles para agregar al resumen financiero");
-      }
-    } else {
-      print(
-          "✅ Datos financieros ya cargados, omitiendo sincronización inicial");
-    }
-  } else {
-    print("ℹ️ Onboarding no completado, omitiendo carga de datos");
-  }
+      } else {}
+    } else {}
+  } else {}
 
   CustomHttpClient httpClient = CustomHttpClient(authService);
-  print("🚀 Lanzando aplicación...");
 
-  print("📦 Cuentas guardadas:");
-  print((await SharedPreferences.getInstance()).getString("accounts"));
+  (await SharedPreferences.getInstance()).getString("accounts");
   runApp(MyApp(
       httpClient: httpClient,
       authService: authService,

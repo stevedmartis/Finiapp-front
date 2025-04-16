@@ -10,10 +10,10 @@ class SavingGoalsWidget extends StatelessWidget {
   final VoidCallback onAddGoal;
 
   const SavingGoalsWidget({
-    Key? key,
+    super.key,
     required this.goals,
     required this.onAddGoal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

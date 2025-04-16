@@ -36,27 +36,20 @@ class TokenStorage {
 
     try {
       await storage.write(key: 'user', value: userData);
-      print("✅ Usuario guardado correctamente en almacenamiento seguro");
     } catch (e) {
-      print("⚠️ Error al guardar usuario: $e");
-
       // Si es el error específico de "ya existe en keychain"
       if (e is PlatformException &&
           (e.code == 'Unexpected security result code' ||
               e.code == '-25299' ||
               (e.message?.contains('already exists') ?? false))) {
-        print("🔄 Eliminando entrada existente y reintentando...");
         try {
           await storage.delete(key: 'user');
           await storage.write(key: 'user', value: userData);
-          print("✅ Usuario guardado correctamente después de reintentar");
         } catch (retryError) {
-          print("❌ Error al reintentar: $retryError");
           // Puedes decidir si quieres propagar este error o manejarlo silenciosamente
         }
       } else {
         // Para otros tipos de errores, puedes decidir si propagarlos o manejarlos
-        print("❌ Error desconocido: $e");
       }
     }
   }

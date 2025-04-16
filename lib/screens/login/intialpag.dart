@@ -46,7 +46,7 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
                 duration: _duration,
                 builder: (_, value, child) {
                   return Opacity(
-                    opacity: value as double,
+                    opacity: value,
                     child: child,
                   );
                 },
@@ -88,7 +88,7 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
                   });
                 },
                 builder: (_, value, child) {
-                  final val = value as double;
+                  final val = value;
                   return Opacity(
                     opacity: val,
                     child: Transform.translate(
@@ -129,15 +129,15 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
                           });
                           widget.onAnimationStarted();
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.all(25.0),
-                          child: Text("create backup"),
-                        ),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: logoCOLOR1,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             )),
+                        child: const Padding(
+                          padding: EdgeInsets.all(25.0),
+                          child: Text("create backup"),
+                        ),
                       ),
                     )
                   : SizedBox(
@@ -169,8 +169,8 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
 }
 
 class ProgressCounter extends AnimatedWidget {
-  const ProgressCounter(Animation<double> animation, {Key? key})
-      : super(key: key, listenable: animation);
+  const ProgressCounter(Animation<double> animation, {super.key})
+      : super(listenable: animation);
 
   double get value => (listenable as Animation).value;
 

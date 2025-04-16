@@ -9,7 +9,7 @@ class EmptyStateWidget extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const EmptyStateWidget({
+  const EmptyStateWidget({super.key, 
     required this.title,
     required this.description,
     required this.buttonText,
@@ -43,7 +43,7 @@ class EmptyStateWidget extends StatelessWidget {
                 Theme.of(context).primaryColor.withOpacity(0.7)
               ],
             ).createShader(bounds),
-            child: Icon(
+            child: const Icon(
               Icons.account_balance_wallet_outlined,
               size: 64,
               color: Colors.white,

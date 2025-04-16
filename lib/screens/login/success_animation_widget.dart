@@ -1,5 +1,4 @@
 import 'package:finiapp/constants.dart';
-import 'package:finiapp/screens/credit_card/credit_card_widget.dart';
 import 'package:finiapp/screens/login/bubles_animation_page.dart';
 import 'package:finiapp/screens/login/success_chck.1.2.dart';
 import 'package:finiapp/screens/login/success_initial.dart';

@@ -2,7 +2,7 @@ import 'package:finiapp/models/savind_dto.dart';
 
 class SavingGoalService {
   // Lista de metas de ahorro
-  List<SavingGoalDto> _savingGoals = [];
+  final List<SavingGoalDto> _savingGoals = [];
 
   // Método para obtener todas las metas
   List<SavingGoalDto> getAllGoals() {

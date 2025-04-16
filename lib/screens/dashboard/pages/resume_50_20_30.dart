@@ -12,12 +12,12 @@ class Rule50_30_20Widget extends StatelessWidget {
   final double totalSavings;
 
   const Rule50_30_20Widget({
-    Key? key,
+    super.key,
     required this.totalIncome,
     required this.totalNeeds,
     required this.totalWants,
     required this.totalSavings,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -357,7 +357,7 @@ class Rule50_30_20Widget extends StatelessWidget {
             if (isIncome && actual > 0)
               Text(
                 '+${formatAbrevCurrency(actual)}',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.greenAccent,
                   fontSize: 12,
                 ),
@@ -451,7 +451,7 @@ class RulePieChartPainter extends CustomPainter {
       // Borde entre ahorros y necesidades (si el círculo está completo)
       if (savingsPercentage > 0 &&
           (needsPercentage + wantsPercentage + savingsPercentage) >= 99) {
-        final savingsEndAngle = -pi / 2;
+        const savingsEndAngle = -pi / 2;
         canvas.drawLine(
           center,
           Offset(

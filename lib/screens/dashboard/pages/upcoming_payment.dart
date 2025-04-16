@@ -10,10 +10,10 @@ class UpcomingPaymentsWidget extends StatelessWidget {
   final Function(PaymentDto) onPaymentMarked;
 
   const UpcomingPaymentsWidget({
-    Key? key,
+    super.key,
     required this.upcomingPayments,
     required this.onPaymentMarked,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +30,12 @@ class UpcomingPaymentsWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   color: Colors.purple,
                   size: 20,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   'Próximos Pagos',
                   style: TextStyle(
@@ -88,8 +88,8 @@ class UpcomingPaymentsWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(
                 Icons.calendar_today,
                 color: Colors.purple,
@@ -111,7 +111,7 @@ class UpcomingPaymentsWidget extends StatelessWidget {
           // Lista de pagos próximos
           ...upcomingPayments
               .map((payment) => _buildPaymentItem(payment, context))
-              .toList(),
+              ,
         ],
       ),
     );

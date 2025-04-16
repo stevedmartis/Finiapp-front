@@ -9,9 +9,9 @@ class BudgetedExpensesChart extends StatefulWidget {
   final List<TransactionDto> transactions;
 
   const BudgetedExpensesChart({
-    Key? key,
+    super.key,
     required this.transactions,
-  }) : super(key: key);
+  });
 
   @override
   State<BudgetedExpensesChart> createState() => _BudgetedExpensesChartState();
@@ -314,7 +314,7 @@ class _BudgetedExpensesChartState extends State<BudgetedExpensesChart> {
             entry.key,
             entry.value,
           );
-        }).toList(),
+        }),
       ],
     );
   }

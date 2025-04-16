@@ -143,9 +143,6 @@ class TransactionProvider extends ChangeNotifier {
         .where((transaction) => transaction.accountId == accountId)
         .toList();
 
-    print(
-        "🔍 Transacciones encontradas para ID: $accountId → $filteredTransactions");
-
     return filteredTransactions
         .where((transaction) => transaction.type == 'Ingreso')
         .fold(0, (sum, transaction) => sum + transaction.amount);
@@ -206,7 +203,6 @@ class TransactionProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs
         .remove('transactions'); // ✅ Eliminar todas las transacciones guardadas
-    print("✅ Transacciones eliminadas correctamente.");
   }
 
   double getTotalIncome(double initialBalance) {
@@ -218,7 +214,6 @@ class TransactionProvider extends ChangeNotifier {
     // ✅ Sumar saldo inicial directamente
     final totalIncome = calculo + initialBalance;
 
-    print(totalIncome); // ✅ Para depurar
     return totalIncome;
   }
 }

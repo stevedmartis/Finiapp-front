@@ -128,9 +128,6 @@ class AccountsProvider extends ChangeNotifier {
       }
     }
 
-    print(
-        "⚠️ No hay cuentas guardadas localmente. Intentando cargar desde la API...");
-
     // 🔥 Ahora intentamos sincronizar con la API
     /*  try {
       List<dynamic> apiResponse = await fetchAccountsFromServer();
@@ -166,14 +163,12 @@ class AccountsProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        print("✅ Cuentas recibidas desde la API: $data");
+
         return data;
       } else {
-        print("❌ Error al obtener cuentas: ${response.statusCode}");
         return [];
       }
     } catch (e) {
-      print("❌ Error en la petición HTTP: $e");
       return [];
     }
   }
@@ -223,18 +218,11 @@ class AccountsProvider extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String encodedData =
         jsonEncode(_accounts.map((e) => e.toJson()).toList());
-
-    print(
-        "📌 ANTES de guardar: ${prefs.getString("accounts")}"); // 🔍 Debug antes de guardar
-    await prefs.setString("accounts", encodedData);
-    print(
-        "✅ DESPUÉS de guardar: ${prefs.getString("accounts")}"); // 🔍 Debug después de guardar
   }
 
   Future<void> clearAccounts() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs
         .remove('accounts'); // ✅ Eliminar todas las transacciones guardadas
-    print("✅ accounts eliminadas correctamente.");
   }
 }
