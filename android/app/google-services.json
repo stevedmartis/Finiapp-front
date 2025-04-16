@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "221594560581",
+    "project_id": "finia-aeef0",
+    "storage_bucket": "finia-aeef0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221594560581:android:deee53f58911d3f7f61b2c",
+        "android_client_info": {
+          "package_name": "cl.finia.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221594560581-1rfhmid5gk6jglriqghg3pe4caem9pl7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cl.finia.app",
+            "certificate_hash": "df7627cde650a8a9acd92a28c25f05521adf5003"
+          }
+        },
+        {
+          "client_id": "221594560581-ca6hpk2d7ak531m5ovl6pi77efkdbtir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cl.finia.app",
+            "certificate_hash": "a89d5d915cde23043cb9c80597be1ed9b5cb02b6"
+          }
+        },
+        {
+          "client_id": "221594560581-js4eiq8n7niecepv6dimt6novttvhjk1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cl.finia.app",
+            "certificate_hash": "c1bf4f4b2a50e46d066cd384b7fc6b95944c5ee0"
+          }
+        },
+        {
+          "client_id": "221594560581-n1jvf14i3q2dhtnq8kp8hk2km267c31o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARyfvDxBauNDOrB0JNQbGOt_vrLwD-z7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221594560581-n1jvf14i3q2dhtnq8kp8hk2km267c31o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "221594560581-2fkb6vnjl8rb25m162qrpeuqs9vftqrq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "cl.finia.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
