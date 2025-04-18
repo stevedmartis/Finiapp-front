@@ -188,7 +188,6 @@ class AccountsProvider extends ChangeNotifier {
   Future<void> deleteAccount(Account account) async {
     _accounts.remove(account);
     _calculateTotalBalance(); // 🔥 Actualizar balance total después de eliminar cuenta
-    await _saveAccounts();
     notifyListeners();
   }
 
@@ -209,15 +208,7 @@ class AccountsProvider extends ChangeNotifier {
   Future<void> addAccount(Account newAccount) async {
     _accounts.add(newAccount);
     _calculateTotalBalance(); // 🔥 Actualizar balance total después de agregar cuenta
-    await _saveAccounts();
     notifyListeners();
-  }
-
-  /// 🔹 Guardar cuentas en `SharedPreferences`
-  Future<void> _saveAccounts() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String encodedData =
-        jsonEncode(_accounts.map((e) => e.toJson()).toList());
   }
 
   Future<void> clearAccounts() async {

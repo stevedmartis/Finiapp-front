@@ -1,5 +1,5 @@
 import 'package:finiapp/constants.dart';
-import 'package:finiapp/screens/login/sign_in.dart';
+import 'package:finiapp/screens/main/components/login_precharge.dart';
 import 'package:finiapp/screens/providers/theme_provider.dart';
 import 'package:finiapp/services/accounts_services.dart';
 import 'package:finiapp/services/auth_service.dart';
@@ -27,17 +27,17 @@ class _SideMenuState extends State<SideMenu> {
       child: ListView(
         children: [
           DrawerHeader(
-            child: Image.asset("assets/images/logo.png"),
+            child: Image.asset("assets/images/finia_logo.png"),
           ),
           DrawerListTile(
-              title: "Dashboard",
+              title: "Inicio",
               svgSrc: "assets/icons/menu_dashboard.svg",
               press: () {
                 Navigator.pushNamed(context, '/mainScreen');
               },
               themeNotifier: themeNotifier),
           DrawerListTile(
-              title: "Credit Cards",
+              title: "Mis Cuentas",
               svgSrc: "assets/icons/menu_tran.svg",
               press: () {
                 var authService =
@@ -47,7 +47,7 @@ class _SideMenuState extends State<SideMenu> {
               },
               themeNotifier: themeNotifier),
           DrawerListTile(
-              title: "SignOut",
+              title: "Cerrar Sesión",
               svgSrc: "assets/icons/menu_profile.svg",
               press: () async {
                 final authService = context.read<AuthService>();
@@ -64,7 +64,8 @@ class _SideMenuState extends State<SideMenu> {
 
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const SignIn()),
+                    MaterialPageRoute(
+                        builder: (context) => const SignInWithPrecache()),
                     (route) => false,
                   );
                 });
@@ -77,7 +78,7 @@ class _SideMenuState extends State<SideMenu> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
-                    themeNotifier.themeMode == ThemeMode.dark
+                    themeNotifier.themeMode == ThemeMode.light
                         ? Icons.dark_mode
                         : Icons.light_mode,
                     color: logoCOLOR1),

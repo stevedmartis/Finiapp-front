@@ -6,6 +6,7 @@ import 'package:finiapp/services/accounts_services.dart';
 import 'package:finiapp/services/auth_service.dart';
 import 'package:finiapp/services/finance_summary_service.dart';
 import 'package:finiapp/services/transaction_service.dart';
+import 'package:finiapp/widgets/buttons/button_continue_loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -64,16 +65,26 @@ class CreditCardDemoState extends State<CreditCardDemo> {
 
         if (combinedAccounts.isEmpty) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Credit Cards')),
-            body: const Center(child: Text('No hay tarjetas disponibles')),
+            appBar: AppBar(title: const Text('Mis Cuentas')),
+            body: const Center(child: Text('No hay cuentas disponibles')),
           );
         }
 
         return Scaffold(
           appBar: AppBar(
             backgroundColor: logoAppBarCOLOR,
-            title: const Text('Credit Cards'),
+            title: const Text('Mis Cuentas'),
           ),
+          floatingActionButton: IconOrSpinnerButton(
+            showIcon: true,
+            loading: false,
+            isMenu: true,
+            onPressed: () {
+              Navigator.pushNamed(context, '/addAccount'); // O tu ruta real
+            },
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           body: isScreenWide
               ? Row(
                   children: [
@@ -105,7 +116,7 @@ class CreditCardDemoState extends State<CreditCardDemo> {
                 )
               : Container(
                   padding: const EdgeInsets.all(0.0),
-                  height: MediaQuery.of(context).size.height * 0.235,
+                  height: MediaQuery.of(context).size.height * 0.70,
                   child: CreditCardSlider(
                     combinedAccounts, // ✅ Ahora el saldo está actualizado
                     pageController: _pageController,

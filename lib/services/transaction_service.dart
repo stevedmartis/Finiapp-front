@@ -48,37 +48,6 @@ class TransactionProvider extends ChangeNotifier {
   List<TransactionDto> _transactions = [];
 
   List<TransactionDto> get transactions => _transactions;
-  String _getGlobalCategory(String category) {
-    const needs = [
-      'Comida',
-      'Transporte',
-      'Salud',
-      'Educación',
-      'Gasolina',
-      'Uber / Taxi',
-      'Hogar',
-      'Mascota'
-    ];
-
-    const wants = [
-      'Ocio',
-      'Streaming',
-      'Ropa',
-      'Videojuegos',
-      'Gimnasio',
-      'Regalos',
-      'Viajes'
-    ];
-
-    const savings = ['Ahorro'];
-
-    if (needs.contains(category)) return 'Necesidades';
-    if (wants.contains(category)) return 'Deseos';
-    if (savings.contains(category)) return 'Ahorros';
-
-    return 'Otro';
-  }
-
 // En el proveedor de transacciones
   double getTotalNeedsExpenses() {
     const needs = [
@@ -194,6 +163,7 @@ class TransactionProvider extends ChangeNotifier {
 
   // ✅ Obtener transacciones de una cuenta específica
   List<TransactionDto> getTransactionsByAccountId(String accountId) {
+    print(_transactions);
     return _transactions
         .where((transaction) => transaction.accountId == accountId)
         .toList();

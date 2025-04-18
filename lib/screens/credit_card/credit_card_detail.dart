@@ -42,11 +42,10 @@ class CreditCardDetailState extends State<CreditCardDetail> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverToBoxAdapter(
-            child: Hero(
-              tag: heroTag,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Hero(
+                tag: heroTag,
                 child: AccountCard(accountSumarry: widget.accountSummary),
               ),
             ),
@@ -121,7 +120,7 @@ class CreditCardDetailState extends State<CreditCardDetail> {
                         Text(
                           formatCurrency(available),
                           style: TextStyle(
-                            color: themeProvider.getSubtitleColor(),
+                            color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),

@@ -1,4 +1,5 @@
 import 'package:finiapp/screens/dashboard/components/header_custom.dart';
+import 'package:finiapp/screens/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -14,18 +15,19 @@ class TransactionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeProvider>(context);
     // ✅ Obtener las transacciones desde el Provider
     final transactionProvider = Provider.of<TransactionProvider>(context);
     final filteredTransactions =
         transactionProvider.getTransactionsByAccountId(accountId);
 
     if (filteredTransactions.isEmpty) {
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.all(16),
         child: Center(
           child: Text(
             'No hay transacciones recientes',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: currentTheme.getSubtitleColor()),
           ),
         ),
       );
@@ -42,7 +44,7 @@ class TransactionsWidget extends StatelessWidget {
         String key = groupedTransactions.keys.elementAt(index);
         List<TransactionDto> tList = groupedTransactions[key]!;
 
-        return _buildTransactionSection(key, tList);
+        return _buildTransactionSection(key, tList, currentTheme);
       },
     );
   }
@@ -82,8 +84,8 @@ class TransactionsWidget extends StatelessWidget {
   }
 
   // ✅ Sección agrupada por fecha
-  Widget _buildTransactionSection(
-      String date, List<TransactionDto> transactions) {
+  Widget _buildTransactionSection(String date,
+      List<TransactionDto> transactions, ThemeProvider currentTheme) {
     if (transactions.isEmpty) return Container();
 
     return ExpansionTile(
@@ -93,20 +95,22 @@ class TransactionsWidget extends StatelessWidget {
       backgroundColor: Colors.transparent,
       title: Text(
         date,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: currentTheme.getTitleColor(),
         ),
       ),
       children: transactions
-          .map((transaction) => _buildTransactionItem(transaction))
+          .map(
+              (transaction) => _buildTransactionItem(transaction, currentTheme))
           .toList(),
     );
   }
 
   // ✅ Componente para mostrar cada transacción
-  Widget _buildTransactionItem(TransactionDto transaction) {
+  Widget _buildTransactionItem(
+      TransactionDto transaction, ThemeProvider currentTheme) {
     final Map<String, IconData> categoryIcons = {
       "Comida": Icons.fastfood,
       "Transporte": Icons.directions_car,
@@ -133,16 +137,9 @@ class TransactionsWidget extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF1C1C1E),
-            Color(0xFF2C2C2E),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: currentTheme.getGradientCard(),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -175,10 +172,10 @@ class TransactionsWidget extends StatelessWidget {
               children: [
                 Text(
                   transaction.category,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: currentTheme.getTitleColor(),
                   ),
                 ),
                 const SizedBox(height: 4),

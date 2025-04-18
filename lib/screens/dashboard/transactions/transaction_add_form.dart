@@ -1,5 +1,6 @@
 import 'package:finiapp/constants.dart';
 import 'package:finiapp/screens/dashboard/components/header_custom.dart';
+import 'package:finiapp/screens/providers/theme_provider.dart';
 import 'package:finiapp/services/accounts_services.dart';
 import 'package:finiapp/services/finance_summary_service.dart';
 import 'package:finiapp/services/transaction_service.dart';
@@ -143,6 +144,7 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeProvider>(context);
     final accountsProvider = Provider.of<AccountsProvider>(context);
     final accounts = accountsProvider.accounts;
     return DraggableScrollableSheet(
@@ -154,8 +156,8 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
         return Container(
           padding:
               EdgeInsets.fromLTRB(16, _showMoreCategories ? 45 : 24, 16, 16),
-          decoration: const BoxDecoration(
-            color: Colors.black,
+          decoration: BoxDecoration(
+            color: currentTheme.getBackgroundColor(),
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
@@ -164,15 +166,16 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "Registrar movimiento",
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                        color: currentTheme.getTitleColor()),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: Icon(Icons.close,
+                        color: currentTheme.getSubtitleColor()),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -188,7 +191,8 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
                     label: const Text("Ingreso"),
                     selected: _isIncome,
                     selectedColor: Colors.green,
-                    backgroundColor: Colors.black26,
+                    backgroundColor:
+                        currentTheme.getTitleColor().withOpacity(0.2),
                     onSelected: (val) => setState(() => _isIncome = true),
                     labelStyle: TextStyle(
                         color: _isIncome ? Colors.white : Colors.green),
@@ -232,7 +236,8 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
               const SizedBox(height: 20),
               _buildTextField("Monto", _amountController, isNumeric: true),
               const SizedBox(height: 20),
-              const Text("Categoría", style: TextStyle(color: Colors.white70)),
+              Text("Categoría",
+                  style: TextStyle(color: currentTheme.getTitleColor())),
               const SizedBox(height: 10),
               Wrap(
                 spacing: 8,
@@ -241,7 +246,6 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
                     .map((category) => _buildCategoryChip(category))
                     .toList(),
               ),
-              const SizedBox(height: 10),
               if (!_isIncome)
                 TextButton(
                   onPressed: () {
@@ -259,6 +263,7 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    disabledBackgroundColor: currentTheme.getSubtitleColor(),
                     backgroundColor: _isIncome ? Colors.green : Colors.red,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
@@ -285,6 +290,7 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
 
   Widget _buildTextField(String label, TextEditingController controller,
       {bool isNumeric = false, Function(String)? onChanged}) {
+    final currentTheme = Provider.of<ThemeProvider>(context);
     return TextField(
       controller: controller,
       keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
@@ -296,21 +302,26 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
           onChanged(value);
         }
       },
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: currentTheme.getTitleColor()),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
+        labelStyle: TextStyle(color: currentTheme.getSubtitleColor()),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: currentTheme.getCardColor(),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            color:
+                currentTheme.getSubtitleColor(), // ✅ Borde cuando no enfocado
+            width: 1.5,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildCategoryChip(Map<String, dynamic> category) {
+    final currentTheme = Provider.of<ThemeProvider>(context);
     int index = _displayedCategories.indexOf(category);
     return GestureDetector(
       onTap: () => setState(() => _selectedCategoryIndex = index),
@@ -324,7 +335,8 @@ class AddTransactionBottomSheetState extends State<AddTransactionBottomSheet> {
           ),
           const SizedBox(height: 5),
           Text(category['label'],
-              style: const TextStyle(color: Colors.white, fontSize: 12)),
+              style:
+                  TextStyle(color: currentTheme.getTitleColor(), fontSize: 12)),
         ],
       ),
     );

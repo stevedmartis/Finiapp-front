@@ -32,13 +32,11 @@ class TransactionHistorialPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Últimas Transacciones",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text("Últimas Transacciones",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: themeProvider.getTitleColor())),
           const SizedBox(height: defaultPadding),
           const Chart(), // ✅ Si deseas filtrar el gráfico por cuenta, ajusta esta parte
           const SizedBox(height: defaultPadding),

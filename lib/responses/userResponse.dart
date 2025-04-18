@@ -4,15 +4,17 @@ class UserAuth {
   final String? email;
   final String? accessToken;
   final String? refreshToken;
+  final String? photoUrl; // ✅ Nuevo campo para la imagen
 
-  UserAuth(
-      {this.userId,
-      this.fullName,
-      this.email,
-      this.accessToken,
-      this.refreshToken});
+  UserAuth({
+    this.userId,
+    this.fullName,
+    this.email,
+    this.accessToken,
+    this.refreshToken,
+    this.photoUrl, // ✅ Incluido en constructor
+  });
 
-  // Define the toJson method
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
@@ -20,10 +22,10 @@ class UserAuth {
       'email': email,
       'accessToken': accessToken,
       'refreshToken': refreshToken,
+      'photoUrl': photoUrl, // ✅ Guardar también la imagen
     };
   }
 
-  // Assuming there is also a fromJson factory constructor
   factory UserAuth.fromJson(Map<String, dynamic> json) {
     return UserAuth(
       userId: json['userId'] as String?,
@@ -31,6 +33,7 @@ class UserAuth {
       email: json['email'] as String?,
       accessToken: json['accessToken'] as String?,
       refreshToken: json['refreshToken'] as String?,
+      photoUrl: json['photoUrl'] as String?, // ✅ Leer la imagen guardada
     );
   }
 }

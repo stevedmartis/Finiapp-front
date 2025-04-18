@@ -4,7 +4,6 @@ import 'package:finiapp/services/accounts_services.dart';
 import 'package:finiapp/services/finance_summary_service.dart';
 import 'package:finiapp/shared_preference/global_preference.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:finiapp/constants.dart';
 import 'package:finiapp/widgets/buttons/button_continue_loading_widget.dart';
 import 'package:provider/provider.dart';
@@ -87,7 +86,7 @@ class AddAccountScreenState extends State<AddAccountScreen> {
     });
   }
 
-  void _addAccount() {
+  void _addAccount() async {
     String name = _accountNameController.text.trim();
     String cleanBalance =
         _balanceController.text.replaceAll(RegExp(r'[^\d]'), '');
@@ -119,16 +118,16 @@ class AddAccountScreenState extends State<AddAccountScreen> {
     final financialProvider =
         Provider.of<FinancialDataService>(context, listen: false);
 
-    financialProvider
-        .addAccountToSummary(newAccount); // ✅ Crear nueva entrada en summary
-    financialProvider
-        .calculateGlobalSummary(); // ✅ Actualizar el resumen global
+    financialProvider.addAccountToSummary(newAccount);
+    financialProvider.calculateGlobalSummary();
 
-    Provider.of<AccountsProvider>(context, listen: false)
-        .setCurrentAccountId(newAccount.id);
+    accountsProvider.setCurrentAccountId(newAccount.id);
 
     _accountNameController.clear();
     _balanceController.clear();
+
+    // ✅ Guardar estado actualizado
+    await _saveAccountsToPrefs();
 
     if (_hasCompletedOnboarding) {
       Navigator.pop(context);
@@ -137,35 +136,39 @@ class AddAccountScreenState extends State<AddAccountScreen> {
     }
   }
 
-  void _finishSetup() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _saveAccountsToPrefs() async {
     final accountsProvider =
         Provider.of<AccountsProvider>(context, listen: false);
+    final prefs = await SharedPreferences.getInstance();
 
     prefs.setString(
-        "accounts",
-        jsonEncode(
-          accountsProvider.accounts.map((e) => e.toJson()).toList(),
-        ));
+      "accounts",
+      jsonEncode(
+        accountsProvider.accounts.map((e) => e.toJson()).toList(),
+      ),
+    );
     prefs.setDouble("totalBalance", _calculateTotalBalance());
     prefs.setDouble("totalNeeds", _calculateTotalNeeds());
     prefs.setDouble("totalWants", _calculateTotalWants());
     prefs.setDouble("totalSavings", _calculateTotalSavings());
+  }
+
+  void _finishSetup() async {
+    await _saveAccountsToPrefs(); // ✅ Reutilizar función
+
+    final prefs = await SharedPreferences.getInstance();
     bool hasCompletedOnboarding =
         prefs.getBool("hasCompletedOnboarding") ?? false;
 
     await setOnboardingCompleted();
 
     if (!hasCompletedOnboarding) {
-      // Primera vez → Marca como completado y muestra la animación
       await prefs.setBool("hasCompletedOnboarding", true);
-
       Navigator.pushReplacement(
         context,
-        bubleSuccessRouter(), // ✅ Primera vez → Animación → Dashboard
+        bubleSuccessRouter(),
       );
     } else {
-      // Ya pasó la animación → Va directo al Dashboard
       Navigator.pop(context);
     }
   }
@@ -276,89 +279,99 @@ class AddAccountScreenState extends State<AddAccountScreen> {
             end: Alignment.topLeft,
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 16, vertical: 0), // Aumenta el padding vertical
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 200,
-                child: SvgPicture.asset("assets/images/wallet.svg"),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Ingresa tus cuentas para empezar a administrar tu dinero automáticamente con la regla 50/30/20.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints
+                      .maxHeight, // 🔥 Ocupar mínimo toda la pantalla
                 ),
-              ),
-              const SizedBox(height: 20),
-              _buildTextField("Nombre de la Cuenta", _accountNameController),
-              const SizedBox(height: 15),
-              _buildDropdownField("Tipo de Cuenta", _selectedAccountType),
-              const SizedBox(height: 15),
-              _buildTextField("Saldo Inicial", _balanceController,
-                  isNumeric: true, onChanged: (value) {
-                double balance =
-                    double.tryParse(value.replaceAll(RegExp(r'[^\d]'), '')) ??
-                        0;
-                _calculateBudget(balance); // Llamar con un `double` corregido
-              }),
-              const SizedBox(height: 20),
-              _buildBudgetDistribution(),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        logoCOLOR1, // Usa el color principal de la app
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: _addAccount,
-                  child: const Text(
-                    "Agregar Cuenta",
-                    style: TextStyle(
-                      color: Colors.white, // Asegura buen contraste
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              if (!_hasCompletedOnboarding)
-                Consumer<AccountsProvider>(
-                  builder: (context, accountsProvider, child) {
-                    return accountsProvider.accounts.isNotEmpty
-                        ? _buildAccountsList()
-                        : const SizedBox();
-                  },
-                ),
-              Consumer<AccountsProvider>(
-                builder: (context, accountsProvider, child) {
-                  return (!_hasCompletedOnboarding &&
-                          accountsProvider.accounts.isNotEmpty)
-                      ? SizedBox(
-                          width: double.infinity,
-                          child: IconOrSpinnerButton(
-                            loading: false,
-                            showIcon: true,
-                            onPressed: _finishSetup,
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Ingresa tus cuentas para empezar a administrar tu dinero automáticamente con la regla 50/30/20.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTextField(
+                          "Nombre de la Cuenta", _accountNameController),
+                      const SizedBox(height: 15),
+                      _buildDropdownField(
+                          "Tipo de Cuenta", _selectedAccountType),
+                      const SizedBox(height: 15),
+                      _buildTextField("Saldo Inicial", _balanceController,
+                          isNumeric: true, onChanged: (value) {
+                        double balance = double.tryParse(
+                                value.replaceAll(RegExp(r'[^\d]'), '')) ??
+                            0;
+                        _calculateBudget(
+                            balance); // Llamar con un `double` corregido
+                      }),
+                      const SizedBox(height: 15),
+                      _buildBudgetDistribution(),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                logoCOLOR1, // Usa el color principal de la app
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                        )
-                      : const SizedBox();
-                },
+                          onPressed: _addAccount,
+                          child: const Text(
+                            "Agregar Cuenta",
+                            style: TextStyle(
+                              color: Colors.white, // Asegura buen contraste
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      if (!_hasCompletedOnboarding)
+                        Consumer<AccountsProvider>(
+                          builder: (context, accountsProvider, child) {
+                            return accountsProvider.accounts.isNotEmpty
+                                ? _buildAccountsList()
+                                : const SizedBox();
+                          },
+                        ),
+                      const SizedBox(height: 20),
+                      Consumer<AccountsProvider>(
+                        builder: (context, accountsProvider, child) {
+                          return (!_hasCompletedOnboarding &&
+                                  accountsProvider.accounts.isNotEmpty)
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  child: IconOrSpinnerButton(
+                                    loading: false,
+                                    showIcon: true,
+                                    onPressed: _finishSetup,
+                                  ),
+                                )
+                              : const SizedBox();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -464,17 +477,6 @@ class AddAccountScreenState extends State<AddAccountScreen> {
         Text(amount,
             style: TextStyle(
                 color: color, fontWeight: FontWeight.bold, fontSize: 16)),
-      ],
-    );
-  }
-
-  Widget _buildBudgetRow(String title, String amount) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title,
-            style: const TextStyle(color: Colors.white70, fontSize: 16)),
-        Text(amount, style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
   }

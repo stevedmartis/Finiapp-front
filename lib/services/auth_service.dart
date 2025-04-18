@@ -13,6 +13,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class AuthService with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   //final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -20,15 +22,8 @@ class AuthService with ChangeNotifier {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
       'email',
-      'profile',
       'https://www.googleapis.com/auth/userinfo.profile',
-      'openid',
     ],
-    signInOption: SignInOption.standard,
-    // Configura clientId condicionalmente según la plataforma
-    clientId: Platform.isIOS
-        ? '221594560581-2fkb6vnjl8rb25m162qrpeuqs9vftqrq.apps.googleusercontent.com'
-        : null,
   );
 
   UserAuth? currentUser; // Almacena la información del usuario globalmente
@@ -123,20 +118,23 @@ class AuthService with ChangeNotifier {
       print("👤 Estado de autenticación cambiado: $user");
 
       if (user != null) {
-        _handledSignOut = false; // reiniciar el flag
+        _handledSignOut = false;
+
         currentUser = UserAuth(
+          userId: user.uid,
           email: user.email,
           fullName: user.displayName,
           accessToken: await user.getIdToken(),
           refreshToken: "",
+          photoUrl: user.photoURL,
         );
+
         await tokenStorage.saveUser(currentUser!);
         notifyListeners();
       } else if (!_handledSignOut) {
         _handledSignOut = true;
-
         currentUser = null;
-        await tokenStorage.deleteAllTokens(); // o lo que uses para limpiar
+        await tokenStorage.deleteAllTokens();
         notifyListeners();
       }
     });
@@ -147,52 +145,119 @@ class AuthService with ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      // Intento de inicio de sesión con Google con timeout
+      GoogleSignInAccount? googleUser;
+      try {
+        googleUser = await _googleSignIn.signIn().timeout(
+          const Duration(seconds: 30),
+          onTimeout: () {
+            print("⚠️ Timeout en el inicio de sesión con Google");
+            return null;
+          },
+        );
+      } catch (e) {
+        print("🔴 Error específico en _googleSignIn.signIn(): $e");
+        // Intenta hacer un signOut para limpiar cualquier estado pendiente
+        try {
+          await _googleSignIn.signOut();
+        } catch (_) {}
+        rethrow;
+      }
+
       if (googleUser == null) {
+        print(
+            "⚠️ El usuario canceló el inicio de sesión con Google o hubo un error");
         isLoading = false;
         notifyListeners();
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      // Obtener tokens de autenticación
+      GoogleSignInAuthentication? googleAuth;
+      try {
+        googleAuth = await googleUser.authentication;
+      } catch (e) {
+        print("🔴 Error al obtener autenticación de Google: $e");
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
 
       // Flujo específico por plataforma
       if (Platform.isIOS) {
-        // Flujo completo de Firebase para iOS (ya funcional)
+        // Flujo para iOS
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
 
-        final UserCredential authResult =
-            await _firebaseAuth.signInWithCredential(credential);
-        final User? firebaseUser = authResult.user;
+        try {
+          final UserCredential authResult =
+              await _firebaseAuth.signInWithCredential(credential);
+          final User? firebaseUser = authResult.user;
 
-        if (firebaseUser != null) {
-          final String? token = await firebaseUser.getIdToken();
+          if (firebaseUser != null) {
+            final String? token = await firebaseUser.getIdToken();
 
-          currentUser = UserAuth(
-            email: firebaseUser.email,
-            fullName: firebaseUser.displayName,
-            accessToken: token,
-            refreshToken: "",
-          );
+            currentUser = UserAuth(
+              userId: firebaseUser.uid,
+              email: firebaseUser.email,
+              fullName: firebaseUser.displayName,
+              accessToken: token,
+              refreshToken: "",
+              photoUrl: firebaseUser.photoURL,
+            );
 
-          await tokenStorage.saveUser(currentUser!);
+            await tokenStorage.saveUser(currentUser!);
+          }
+        } catch (e) {
+          print("🔴 Error al iniciar sesión con Firebase: $e");
+          isLoading = false;
+          notifyListeners();
+          return;
         }
       } else {
-        currentUser = UserAuth(
-          email: googleUser.email,
-          fullName: googleUser.displayName,
-          accessToken: googleAuth.accessToken, // Usamos access token como token
-          refreshToken: "",
-        );
+        // Flujo para Android - usando Firebase directamente también para Android
+        try {
+          // Crear credencial
+          final credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
 
-        await tokenStorage.saveUser(currentUser!);
-        notifyListeners();
+          // Iniciar sesión con Firebase
+          final UserCredential authResult =
+              await _firebaseAuth.signInWithCredential(credential);
+          final User? firebaseUser = authResult.user;
+
+          if (firebaseUser != null) {
+            final String? token = await firebaseUser.getIdToken();
+
+            currentUser = UserAuth(
+              userId: firebaseUser.uid,
+              email: firebaseUser.email,
+              fullName: firebaseUser.displayName,
+              accessToken: token,
+              refreshToken: "",
+              photoUrl: firebaseUser.photoURL,
+            );
+
+            await tokenStorage.saveUser(currentUser!);
+          } else {
+            print("⚠️ No se pudo obtener el usuario de Firebase");
+          }
+        } catch (e) {
+          print("🔴 Error en el flujo de Android con Firebase: $e");
+          isLoading = false;
+          notifyListeners();
+          return;
+        }
       }
+
+      notifyListeners();
     } catch (error) {
+      print("🔴 Error general en signInWithGoogle: $error");
+      // No lanzar el error, solo registrarlo
     } finally {
       isLoading = false;
       notifyListeners();
@@ -265,7 +330,7 @@ class AuthService with ChangeNotifier {
       await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
       await tokenStorage.deleteAllTokens();
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       // 🔥 Limpiar datos de la app
       currentUser = null;
       isLoading = false;
@@ -274,7 +339,7 @@ class AuthService with ChangeNotifier {
       await accountsProvider?.clearAccounts();
       await transactionProvider?.clearTransactions();
       await financialProvider?.clearFinanceData();
-
+      await prefs.setBool("hasCompletedOnboarding", false);
       notifyListeners();
     } catch (error) {
       print("❌ Error en signOut: $error");

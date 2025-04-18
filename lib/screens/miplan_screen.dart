@@ -173,7 +173,6 @@ class _BudgetPlanWidgetState extends State<BudgetPlanWidget> {
     final percentage = data['percentage'];
     final isExceeded = data['isExceeded'];
     final available = data['available'];
-    final budget = data['budget'];
     final spent = data['spent'];
 
     final currentTheme = Provider.of<ThemeProvider>(context);
@@ -351,12 +350,6 @@ class _BudgetPlanWidgetState extends State<BudgetPlanWidget> {
     // Calcular el balance total (ingresos - gastos)
     double totalSpent = widget.transactions
         .where((transaction) => transaction.type == "Gasto")
-        .fold(0, (sum, transaction) => sum + transaction.amount);
-
-    double totalSaved = widget.transactions
-        .where((transaction) =>
-            transaction.type == "Ingreso" &&
-            _getGlobalCategory(transaction.category) == "Ahorros")
         .fold(0, (sum, transaction) => sum + transaction.amount);
 
     // Balance actual

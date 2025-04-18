@@ -1,4 +1,3 @@
-import 'package:finiapp/constants.dart';
 import 'package:finiapp/screens/login/bubles_animation_page.dart';
 import 'package:finiapp/screens/login/success_chck.1.2.dart';
 import 'package:finiapp/screens/login/success_initial.dart';
@@ -79,9 +78,9 @@ class BublesSuccesPageState extends State<BublesSuccesPage>
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [darkCardBackground, cardDark],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFF1A0033), Colors.black],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
           ),
         ),
         child: Stack(

@@ -4,9 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
   static const String themePrefKey = 'theme_mode';
+  static const String firstLaunchKey = 'first_launch';
 
-  ThemeMode _themeMode = ThemeMode.light;
+  // Inicializar con tema oscuro por defecto
+  ThemeMode _themeMode = ThemeMode.dark;
   bool _isDetailPage = false;
+
   ThemeProvider() {
     _loadThemeMode();
   }
@@ -132,17 +135,40 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   void _loadThemeMode() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedTheme = prefs.getString(themePrefKey);
-    if (savedTheme != null) {
-      _themeMode = savedTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Verificar si es la primera ejecución
+      final isFirstLaunch = prefs.getBool(firstLaunchKey) ?? true;
+
+      if (isFirstLaunch) {
+        // Si es la primera ejecución, establecer tema oscuro por defecto
+        await prefs.setBool(firstLaunchKey, false);
+        await _saveThemeMode(ThemeMode.dark); // Ahora podemos usar await
+        _themeMode = ThemeMode.dark;
+      } else {
+        // Si no es la primera ejecución, cargar el tema guardado
+        final savedTheme = prefs.getString(themePrefKey);
+        if (savedTheme != null) {
+          _themeMode = savedTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
+        }
+      }
+
+      notifyListeners();
+    } catch (e) {
+      print('Error cargando preferencias de tema: $e');
+      // En caso de error, mantener el tema oscuro por defecto
     }
-    notifyListeners();
   }
 
-  void _saveThemeMode(ThemeMode themeMode) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(
-        themePrefKey, themeMode == ThemeMode.dark ? 'dark' : 'light');
+  // Cambiado para devolver un Future para permitir espera
+  Future<void> _saveThemeMode(ThemeMode themeMode) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+          themePrefKey, themeMode == ThemeMode.dark ? 'dark' : 'light');
+    } catch (e) {
+      print('Error guardando preferencias de tema: $e');
+    }
   }
 }

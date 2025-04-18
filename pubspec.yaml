@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+7
+version: 1.0.0+12
 
 environment:
   sdk: '>=3.4.4 <4.0.0'
@@ -62,7 +62,17 @@ dependencies:
   webview_flutter_android: any
   webview_flutter_wkwebview: any
   vector_math: any
+
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png" # ← Reemplaza con la ruta de tu ícono
+
+
   flutter_test:
     sdk: flutter
 
@@ -91,7 +101,6 @@ flutter:
     - assets/icons/google.svg
     - assets/icons/apple-logo.svg
     - assets/images/signup-vector.svg
-    - assets/images/cards/
     - assets/images/banks/
 
   fonts:

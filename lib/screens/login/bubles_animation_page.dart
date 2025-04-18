@@ -310,12 +310,14 @@ class BubblesAnimationPage extends StatelessWidget {
                         bubbles,
                       ),
                       child: Container(
-                          decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                        colors: [darkCardBackground, darkCardBackground],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ))),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF1A0033), Colors.black],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

@@ -1,10 +1,10 @@
 import 'package:finiapp/constants.dart';
+import 'package:finiapp/screens/main/components/image_login.dart';
 
 import 'package:finiapp/services/auth_service.dart';
 import 'package:finiapp/widgets/buttons/button_continue_loading_widget.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:finiapp/screens/login/phone_login.dart';
 import 'package:finiapp/widgets/horizontal_line.dart';
 import 'package:finiapp/widgets/signup_with_phone.dart';
@@ -20,7 +20,6 @@ class SignIn extends StatelessWidget {
 
     // Usar MediaQuery para determinar el tamaño de la pantalla
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     bool isDesktop = screenWidth > 600; // Un simple criterio para "escritorio"
 
     return Scaffold(
@@ -33,10 +32,11 @@ class SignIn extends StatelessWidget {
                 // Layout para escritorio con dos columnas
                 children: [
                   Expanded(
-                    child: SvgPicture.asset(
-                      "assets/images/signup-vector.svg",
-                      // Ajustar la altura de la imagen para escritorio
-                      height: screenHeight,
+                    child: Image.asset(
+                      "assets/images/signup-illustration.png",
+                      width: screenWidth * 0.8, // Ajusta el tamaño de la imagen
+                      fit: BoxFit
+                          .contain, // Opcional, para mantener proporciones
                     ),
                   ),
                   Expanded(
@@ -50,12 +50,7 @@ class SignIn extends StatelessWidget {
                 // Layout vertical para móviles con scroll
                 child: Column(
                   children: [
-                    SvgPicture.asset(
-                      "assets/images/signup-vector.svg",
-                      // Usar un porcentaje del ancho del dispositivo para la imagen
-                      width: screenWidth *
-                          0.8, // Ajusta este valor según sea necesario
-                    ),
+                    LoginIllustration(),
                     _buildButtons(context,
                         authProvider), // Botones debajo de la imagen para móviles
                   ],
@@ -79,20 +74,20 @@ class SignIn extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SocialButton(
+/*           SocialButton(
             name: "Entrar con Facebook",
             icon: "assets/icons/facebook.svg",
             onPressed: () {
               // Aquí manejarías el inicio de sesión con Facebook
             },
           ),
-          SizedBox(height: buttonSpacing), // Espacio entre botones
+          SizedBox(height: buttonSpacing),  */
           SocialButton(
             name: "Entrar con Google",
             icon: "assets/icons/google.svg",
             onPressed: () => _signInWithGoogle(context),
           ),
-          SizedBox(height: buttonSpacing), // Espacio entre botones
+          /*  SizedBox(height: buttonSpacing), // Espacio entre botones
           SocialButton(
             name: "Entrar con Apple",
             icon: "assets/icons/apple-logo.svg",
@@ -100,7 +95,7 @@ class SignIn extends StatelessWidget {
               // Aquí manejarías el inicio de sesión con Apple
             },
             appleLogo: true,
-          ),
+          ), */
           SizedBox(
               height:
                   buttonSpacing * 2), // Espacio más grande antes de la línea

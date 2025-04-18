@@ -1,4 +1,3 @@
-import 'package:finiapp/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
@@ -17,9 +16,9 @@ class SuccessCompletePage extends AnimatedWidget {
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [logoCOLOR1, logoCOLOR2],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF1A0033), Colors.black],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
                 ),
               ),
               child: Column(

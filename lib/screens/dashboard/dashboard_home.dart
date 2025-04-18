@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finiapp/constants.dart';
 import 'package:finiapp/controllers/menu_app_controller.dart';
 import 'package:finiapp/models/budget_distribution_dto.dart';
@@ -352,11 +353,6 @@ class DashBoardHomeScreenState extends State<DashBoardHomeScreen> {
     final currentAccountId =
         Provider.of<AccountsProvider>(context, listen: true).currentAccountId;
 
-// Para el header superior de tu app (donde muestras $1.3M balance total)
-    final totalIncome = accountsProvider.getTotalIncome().toDouble();
-    final totalExpenses = transactionProvider.getTotalExpenses().toDouble();
-    final totalBalance = totalIncome - totalExpenses;
-
     return Scaffold(
       bottomNavigationBar: CustomBottomNavBar(
         onTransactionPressed: () {
@@ -390,18 +386,39 @@ class DashBoardHomeScreenState extends State<DashBoardHomeScreen> {
               leading: Row(
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(left: 20, top: 10),
+                    margin: const EdgeInsets.only(left: 20, top: 15),
                     child: GestureDetector(
                       onTap: () {
                         HapticFeedback.mediumImpact();
                         context.read<MenuAppController>().controlMenu();
                       },
-                      child: const CircleAvatar(
+                      child: CircleAvatar(
                         radius: 20,
-                        backgroundImage: AssetImage(
-                            'assets/images/profile_pic.png'), // Ruta a tu imagen
-                        backgroundColor: Colors
-                            .transparent, // Para asegurar que no haya un color de fondo
+                        backgroundColor: Colors.transparent,
+                        child: ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: context
+                                    .watch<AuthService>()
+                                    .currentUser
+                                    ?.photoUrl ??
+                                '',
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Image.asset(
+                              'assets/images/finia_logo.png',
+                              fit: BoxFit.cover,
+                              width: 40,
+                              height: 40,
+                            ),
+                            errorWidget: (context, url, error) => Image.asset(
+                              'assets/images/finia_logo.png',
+                              fit: BoxFit.cover,
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -412,14 +429,14 @@ class DashBoardHomeScreenState extends State<DashBoardHomeScreen> {
                         'Hola,',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
                         ' ${getFirstWord(authProvider.globalUser?.fullName)}',
                         style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold),
                       )
                     ]),
@@ -636,18 +653,23 @@ class DashBoardHomeScreenState extends State<DashBoardHomeScreen> {
                   }
 
                   return SizedBox(
-                    height: 160, // Altura reducida
+                    height: 200, // aumenta un poco más de lo que medía antes
                     child: PageView.builder(
                       controller: _pageController,
                       itemCount: combinedAccounts.length,
                       itemBuilder: (context, index) {
                         final accountSummary = combinedAccounts[index];
-                        return Hero(
-                          tag: 'cardsHome-${accountSummary.account.name}',
-                          child: GestureDetector(
-                            onTap: () =>
-                                _handleCardTap(context, accountSummary),
-                            child: _buildAccountCard(accountSummary),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 0),
+                          child: Hero(
+                            tag: 'cardsHome-${accountSummary.account.name}',
+                            child: GestureDetector(
+                              onTap: () =>
+                                  _handleCardTap(context, accountSummary),
+                              child:
+                                  AccountCard(accountSumarry: accountSummary),
+                            ),
                           ),
                         );
                       },
@@ -981,11 +1003,6 @@ class DashBoardHomeScreenState extends State<DashBoardHomeScreen> {
                           ),
                         );
                       }
-
-                      // Si hay datos, mostrar el gráfico
-                      final totalAvailable =
-                          financialData.getTotalDisponible(accountsProvider);
-
                       return Container(
                         padding: const EdgeInsets.all(defaultPadding),
                         margin: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -1041,10 +1058,6 @@ class DashBoardHomeScreenState extends State<DashBoardHomeScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildAccountCard(AccountWithSummary account) {
-    return AccountCard(accountSumarry: account);
   }
 
   void _handleCardTap(BuildContext context, AccountWithSummary accountSummary) {

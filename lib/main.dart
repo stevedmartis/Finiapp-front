@@ -1,7 +1,9 @@
 import 'package:finiapp/firebase_options.dart';
 import 'package:finiapp/helper/lifecycle_event.dart';
 import 'package:finiapp/screens/credit_card/credit_cards_page.dart';
+import 'package:finiapp/screens/login/add_accouts_explain_page.dart';
 import 'package:finiapp/screens/login/onboarding_page.dart';
+import 'package:finiapp/screens/main/components/login_precharge.dart';
 import 'package:finiapp/screens/providers/theme_provider.dart';
 import 'package:finiapp/services/accounts_services.dart';
 import 'package:finiapp/services/auth_service.dart';
@@ -14,7 +16,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:finiapp/controllers/menu_app_controller.dart';
 import 'package:finiapp/screens/main/main_screen.dart';
-import 'package:finiapp/screens/login/sign_in.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,7 +38,6 @@ void main() async {
       prefs.getBool("hasCompletedOnboarding") ?? false;
 
   await initializeDateFormatting('es_ES');
-
   AuthService authService = AuthService();
 
   AccountsProvider accountsProvider = AccountsProvider();
@@ -57,7 +57,6 @@ void main() async {
   await transactionProvider.clearTransactions();
   await financialProvider
       .clearFinanceData(); // Asegúrate de haber implementado este método
-  "✅ Todos los datos han sido eliminados");
 
   await prefs.setBool("hasCompletedOnboarding", false);
  */
@@ -119,6 +118,7 @@ class MyApp extends StatefulWidget {
   final AccountsProvider accountsProvider;
   final TransactionProvider transactionProvider; // ✅ Recibe el provider cargado
   final FinancialDataService financialProvider;
+
   const MyApp({
     super.key,
     required this.httpClient,
@@ -127,6 +127,7 @@ class MyApp extends StatefulWidget {
     required this.accountsProvider,
     required this.transactionProvider,
     required this.financialProvider,
+
     // ✅ Lo pasamos aquí
   });
 
@@ -135,6 +136,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final ThemeProvider themeProvider = ThemeProvider();
   @override
   void dispose() {
     // No olvides cerrar el cliente HTTP cuando la app se cierre
@@ -154,7 +156,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (context) => MenuAppController()),
         ChangeNotifierProvider.value(value: widget.authService),
-        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: widget.accountsProvider),
         ChangeNotifierProvider.value(value: widget.transactionProvider),
 
@@ -175,14 +177,15 @@ class _MyAppState extends State<MyApp> {
             themeMode: themeProvider.themeMode, // Usa el tema oscuro
             routes: {
               '/mainScreen': (context) => const MainScreen(),
-              '/signIn': (context) => const SignIn(),
+              '/signIn': (context) => const SignInWithPrecache(),
               '/cards': (context) => const CreditCardDemo(),
               '/onB': (context) => const OnboardingScreen(),
+              '/addAccount': (context) => const AddAccountScreen(),
             },
             home: Consumer<AuthService>(
               builder: (context, auth, _) {
                 if (auth.currentUser == null) {
-                  return const SignIn();
+                  return const SignInWithPrecache();
                 }
                 return widget.hasCompletedOnboarding
                     ? const MainScreen()

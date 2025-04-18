@@ -40,9 +40,11 @@ class SignupWithPhonePage extends StatelessWidget {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    SvgPicture.asset(
-                      "assets/images/signup-illustration.svg",
+                    Image.asset(
+                      "assets/images/signup-illustration.png",
                       width: screenWidth * 0.8, // Ajusta el tamaño de la imagen
+                      fit: BoxFit
+                          .contain, // Opcional, para mantener proporciones
                     ),
                     _buildContent(context),
                   ],
@@ -64,7 +66,7 @@ class SignupWithPhonePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SignupWithPhone(
-            name: "Entrar con mi número de celular",
+            name: "Entrar como invitado",
             onPressed: () {
               // Define la lógica al presionar aquí
             },

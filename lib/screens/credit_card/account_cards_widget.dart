@@ -13,78 +13,47 @@ class AccountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final transactionProvider = context.watch<TransactionProvider>();
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: _getBackgroundDecoration(accountSumarry.account.type),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 30,
-            right: 10,
-            child: _getBankLogo(accountSumarry.account.bankName),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(accountSumarry.account),
-              const SizedBox(height: 12),
-              Text(
-                accountSumarry.account.name.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1.2,
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: _getBackgroundDecoration(accountSumarry.account.type),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 30,
+              right: 10,
+              child: _getBankLogo(accountSumarry.account.bankName),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(accountSumarry.account),
+                const SizedBox(height: 12),
+                Text(
+                  accountSumarry.account.name.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 1.2,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Saldo: ${formatCurrency(accountSumarry.getCalculatedBalance(transactionProvider))}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.greenAccent,
+                const SizedBox(height: 10),
+                Text(
+                  'Saldo: ${formatCurrency(accountSumarry.getCalculatedBalance(transactionProvider))}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.greenAccent,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
-    );
-  }
-
-  void _showAccountOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit, color: Colors.blue),
-                title: const Text("Editar Cuenta"),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text("Eliminar Cuenta"),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 
